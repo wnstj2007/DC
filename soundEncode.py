@@ -37,8 +37,8 @@ def divide_by_tone(each_data):
 def to_freq(step):
     ######insert your code in function######
     freq = []
-    for i in step
-        freq.append(START_HZ + (i*STEP_HZ)):
+    for i in step:
+        freq.append(START_HZ + (i*STEP_HZ))
 
     return freq
 
