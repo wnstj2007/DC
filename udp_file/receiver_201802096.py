@@ -4,12 +4,12 @@ import os
 
 def receive_file(file_name, addr, port):
     data, addr = receiver_socket.recvfrom(2000)
-    if data != 'valid list command':
+    if data.decode('utf-8') != 'valid list command':
         print('not valid command')
 
     file_exist, addr = receiver_socket.recvfrom(2000)
-    if file_exist != "file doesn't exist!":
-        print(data)
+    if file_exist.decode('utf-8') != "file doesn't exist!":
+        print(file_exist)
         return None
 
     file_size, addr = receiver_socket.recvfrom(2000)

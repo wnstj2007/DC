@@ -28,7 +28,7 @@ sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sender_socket.bind(('', 8000))
 
 data, addr = sender_socket.recvfrom(2000)
-data = data.split(' ')
+data = data.decode('utf-8').split(' ')
 command = data[0]
 
 while True:
@@ -40,5 +40,5 @@ while True:
         sys.exit()
     
     data, addr = sender_socket.recvfrom(2000)
-    data = data.split(' ')
+    data = data.decode('utf-8').split(' ')
     command = data[0]
