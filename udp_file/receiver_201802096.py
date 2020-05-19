@@ -21,7 +21,7 @@ def receive_file(file_name, addr, port):
             file_data, addr = receiver_socket.recvfrom(4096)
             f.write(file_data)
 
-ip_addr = '192.168.1.8'
+ip_addr = '192.168.1.3'
 port = 8000
 
 receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
