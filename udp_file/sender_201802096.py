@@ -3,27 +3,26 @@ import sys
 import os
 
 def sender_send(file_name, addr, port):
-    sender_socket.sendto('valid list command'.encode('utf-8'), (addr, port))
+    sender_socket.sendto('valid list command'.encode('utf-8'), addr)
 
     if os.path.isfile(file_name):
-        sender_socket.sendto('file exists!'.encode('utf-8'), (addr, port))
+        sender_socket.sendto('file exists!'.encode('utf-8'), addr)
         file_size = os.stat(file_name)
-        print('file size in bytes:', os.stat(file_name))
+        print('file size in bytes:', file_size.st_size)
         file_size = int(file_size.st_size/4096)+1
-        sender_socket.sendto(file_size, (addr, port))
+        sender_socket.sendto(str(file_size).encode('utf-8'), addr)
 
         with open(file_name, 'rb') as f:
             for i in range(file_size):
                 print('packet number', i)
                 print('data sending now')
-                sender_socket.sendto(f.read(4096), (addr, port))
+                sender_socket.sendto(f.read(4096), addr)
         print('sent all the files normally!')
     else:
         print("file doesn't exist!")
-        sender_socket.sendto("file doesn't exist!".encode('utf-8'), (addr, port))
+        sender_socket.sendto("file doesn't exist!".encode('utf-8'), addr)
 
 port = 8000
-
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sender_socket.bind(('', 8000))
 
