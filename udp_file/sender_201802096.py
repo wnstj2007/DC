@@ -32,7 +32,7 @@ def sender_send(file_name, addr):
 def sender_header(data, addr):
     dst_ip, dst_port = addr
     dst_ip = list(map(int, dst_ip.split('.')))
-    src_ip = '192.168.1.2' #ip주소 확인 후 수정
+    src_ip = '192.168.1.3' #ip주소 확인 후 수정
     src_ip = list(map(int, src_ip.split('.')))
     for i in range(4):
         dst_ip[i] = format(dst_ip[i], 'x').zfill(2)
