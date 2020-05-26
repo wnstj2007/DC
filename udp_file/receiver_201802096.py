@@ -51,7 +51,7 @@ def checksum(header, data):
     sum = sum.replace('1', 'b')
     sum = sum.replace('a', '1')
     sum = sum.replace('b', '0')
-    sum = format(int(sum, 2), 'x')
+    sum = format(int(sum, 2), 'x').zfill(4)
     print('after :',sum)
     return sum
 
