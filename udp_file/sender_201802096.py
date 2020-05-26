@@ -6,7 +6,7 @@ def sender_send(file_name, addr):
     if os.path.isfile(file_name):
         file_size = os.stat(file_name)
         print('file size in bytes:', file_size.st_size)
-        file_size = int(file_size.st_size/1024)+1
+        file_size = int(file_size.st_size/984)+1
         sender_socket.sendto(str(file_size).encode('utf-8'), addr)
 
         with open(file_name, 'rb') as f:
@@ -28,7 +28,6 @@ def sender_send(file_name, addr):
     else:
         print("file doesn't exist!")
 
-#c0a80138c0a801ca001103dec1f40f7503de6d6f -> 40
 def sender_header(data, addr):
     dst_ip, dst_port = addr
     dst_ip = list(map(int, dst_ip.split('.')))
