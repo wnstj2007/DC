@@ -11,12 +11,15 @@ def receive_file(file_name, addr):
             header = file_data[:40]
             file_data = file_data[40:]
             sender_checksum = header[-4:]
+            print('Received checksum :',sender_checksum)
             header = header[:-4] + '0000'
             new_checksum = checksum(header, file_data)
+            print('New calculated checksum :',new_checksum)
             if sender_checksum == new_checksum:
                 f.write(file_data)
             else:
                 print('not matching checksum!')
+                sys.exit()
 
 def checksum(header, data):
     sum = '0000'
