@@ -7,13 +7,14 @@ def sender_send(file_name, addr):
         file_size = os.stat(file_name)
         print('file size in bytes:', file_size.st_size)
         file_size = int(file_size.st_size/1024)+1
-        #sender_socket.sendto(str(file_size).encode('utf-8'), addr)
+        sender_socket.sendto(str(file_size).encode('utf-8'), addr)
 
         with open(file_name, 'rb') as f:
             for i in range(file_size):
                 print('packet number', i)
                 print('data sending now')
                 #헤더길이 : 8+8+4+4+2+2+4+4+4 = 40
+                #1024-40 = 984
                 data = f.read(984).decode('utf-8')
                 header = sender_header(data, addr)
                 #마지막 4byte인 checksum 값을 0에서 계산된 값으로 변경
@@ -22,16 +23,12 @@ def sender_send(file_name, addr):
                 header += new_checksum
                 sender_data = header + data
 
-                print(len(sender_data.encode('utf-8')))
-                return None
-
-                #sender_socket.sendto(sender_data.encode('utf-8'), addr)
+                sender_socket.sendto(sender_data.encode('utf-8'), addr)
         print('sent all the files normally!')
     else:
         print("file doesn't exist!")
-        #sender_socket.sendto("file doesn't exist!".encode('utf-8'), addr)
 
-#c0a80138c0a801ca001103dec1f40f7503de6d6f - 40
+#c0a80138c0a801ca001103dec1f40f7503de6d6f -> 40
 def sender_header(data, addr):
     dst_ip, dst_port = addr
     dst_ip = list(map(int, dst_ip.split('.')))
@@ -82,7 +79,9 @@ def checksum(header, data):
         #carry bit 발생 시
         if len(sum)==5:
             sum = format(int(sum[1:], 16)+int(sum[0], 16), 'x').zfill(4)
+
     print('before :',sum)
+    #sum을 이진수로 바꾼 후 0과 1을 임의의 값으로 치환했다가 다시 1, 0으로 바꾼다.
     sum = format(int(sum, 16), 'b')
     sum = sum.replace('0', 'a')
     sum = sum.replace('1', 'b')
@@ -93,11 +92,9 @@ def checksum(header, data):
     return sum
 
 port = 8000
-addr = ('192.168.1.1', port)
-sender_send('steve_jobs_speech_script.txt', addr)
-#sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#sender_socket.bind(('', 8000))
-'''
+sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sender_socket.bind(('', 8000))
+
 data, addr = sender_socket.recvfrom(2000)
 data = data.decode('utf-8').split(' ')
 command = data[0]
@@ -105,7 +102,7 @@ command = data[0]
 while True:
     if command == 'receive':
         file_name = data[1]
-        sender_send(file_name, addr, port)
+        sender_send(file_name, addr)
     elif command == 'exit':
         sender_socket.close()
         sys.exit()
@@ -113,4 +110,3 @@ while True:
     data, addr = sender_socket.recvfrom(2000)
     data = data.decode('utf-8').split(' ')
     command = data[0]
-    '''
