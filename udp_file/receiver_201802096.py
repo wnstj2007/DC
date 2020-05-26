@@ -2,18 +2,7 @@ import socket
 import sys
 import os
 
-def receive_file(file_name, addr, port):
-    data, addr = receiver_socket.recvfrom(2000)
-    if data.decode('utf-8') != 'valid list command':
-        print('not valid command')
-        return None
-
-    file_exist, addr = receiver_socket.recvfrom(2000)
-    file_exist = file_exist.decode('utf-8')
-    if file_exist == "file doesn't exist!":
-        print(file_exist)
-        return None
-
+def receive_file(file_name, addr):
     file_size, addr = receiver_socket.recvfrom(2000)
     with open(file_name, 'wb') as f:
         for i in range(int(file_size.decode('utf-8'))):
@@ -21,7 +10,7 @@ def receive_file(file_name, addr, port):
             file_data, addr = receiver_socket.recvfrom(4096)
             f.write(file_data)
 
-ip_addr = '192.168.1.8'
+ip_addr = '192.168.1.3'
 port = 8000
 
 receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -35,7 +24,7 @@ while True:
     command = command.split(' ')
     if command[0] == 'receive':
         file_name = command[1]
-        receive_file(file_name, ip_addr, port)
+        receive_file(file_name, ip_addr)
     elif command[0] == 'exit':
         receiver_socket.close()
         sys.exit()
