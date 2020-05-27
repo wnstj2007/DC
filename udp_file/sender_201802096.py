@@ -12,8 +12,7 @@ def sender_send(file_name, addr):
         header = header[:-4]
         header += new_checksum
         sender_data = header + file_size
-        sender_socket.sendto(file_size.encode('utf-8'), addr)
-
+        sender_socket.sendto(sender_data.encode('utf-8'), addr)
         with open(file_name, 'rb') as f:
             for i in range(int(file_size)):
                 print('packet number', i)
