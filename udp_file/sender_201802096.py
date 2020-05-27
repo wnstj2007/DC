@@ -27,6 +27,7 @@ def sender_send(file_name, addr):
         print('sent all the files normally!')
     else:
         print("file doesn't exist!")
+        sys.exit()
 
 def sender_header(data, addr):
     dst_ip, dst_port = addr
