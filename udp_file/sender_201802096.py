@@ -6,8 +6,13 @@ def sender_send(file_name, addr):
     if os.path.isfile(file_name):
         file_size = os.stat(file_name)
         print('file size in bytes:', file_size.st_size)
-        file_size = int(file_size.st_size/984)+1
-        sender_socket.sendto(str(file_size).encode('utf-8'), addr)
+        file_size = str(int(file_size.st_size/984)+1)
+        header = sender_header(file_size, addr)
+        new_checksum = checksum(header, file_size)
+        header = header[:-4]
+        header += new_checksum
+        sender_data = header + file_size
+        sender_socket.sendto(file_size.encode('utf-8'), addr)
 
         with open(file_name, 'rb') as f:
             for i in range(file_size):
