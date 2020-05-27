@@ -15,7 +15,7 @@ def receive_file(file_name, addr):
             print('Received checksum :',sender_checksum)
             header = header[:-4] + '0000'
             new_checksum = checksum(header, file_data)
-            print('New calculated checksum :',new_checksum)
+            print('New calculated checksum : 0x'+new_checksum)
             if sender_checksum == new_checksum:
                 f.write(file_data.encode('utf-8'))
             else:
