@@ -12,9 +12,9 @@ def receive_file(file_name, addr):
             header = file_data[:40]
             file_data = file_data[40:]
             sender_checksum = header[-4:]
-            print('Received checksum :',sender_checksum)
             header = header[:-4] + '0000'
             new_checksum = checksum(header, file_data)
+            print('Received checksum :',sender_checksum)
             print('New calculated checksum : 0x'+new_checksum)
             if sender_checksum == new_checksum:
                 f.write(file_data.encode('utf-8'))
