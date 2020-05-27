@@ -4,6 +4,7 @@ import os
 
 def receive_file(file_name, addr):
     file_size, addr = receiver_socket.recvfrom(2000)
+    file_size = file_size.decode('utf-8')
     header = file_size[:40]
     file_size = file_size[40:]
     sender_checksum = header[-4:]
@@ -15,7 +16,7 @@ def receive_file(file_name, addr):
         print('not matching checksum!')
         sys.exit()
     with open(file_name, 'wb') as f:
-        for i in range(int(file_size.decode('utf-8'))):
+        for i in range(int(file_size)):
             print('packet number', i)
             file_data, addr = receiver_socket.recvfrom(1024)
             file_data = file_data.decode('utf-8')

@@ -15,7 +15,7 @@ def sender_send(file_name, addr):
         sender_socket.sendto(file_size.encode('utf-8'), addr)
 
         with open(file_name, 'rb') as f:
-            for i in range(file_size):
+            for i in range(int(file_size)):
                 print('packet number', i)
                 print('data sending now')
                 #헤더길이 : 8+8+4+4+2+2+4+4+4 = 40
