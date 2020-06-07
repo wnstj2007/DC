@@ -12,30 +12,38 @@ def sender_send(file_name, addr):
         new_checksum = checksum(header, file_size)
         header = header[:-4]
         header += new_checksum
-        sender_data = sequence_num + header + file_size
+        sender_data = header + file_size
         sender_socket.sendto(sender_data.encode('utf-8'), addr)
         with open(file_name, 'rb') as f:
             for i in range(int(file_size)):
-                print('packet number', i)
-                print('data sending now')
+                print('sending index :', sequence_num)
                 #헤더길이 : 8+8+4+4+2+2+4+4+4 = 40
-                #1024-40 = 984
-                data = f.read(984).decode('utf-8')
+                #1024-40-1 = 983
+                data = f.read(983).decode('utf-8')
                 header = sender_header(data, addr)
                 #마지막 4byte인 checksum 값을 0에서 계산된 값으로 변경
                 new_checksum = checksum(header, data)
                 header = header[:-4]
                 header += new_checksum
-                sender_data = header + data
+                sender_data = sequence_num + header + data
+                stopnwait(sender_data, addr)
+                print('packet number', i)
 
-                sender_socket.sendto(sender_data.encode('utf-8'), addr)
         print('sent all the files normally!')
     else:
         print("file doesn't exist!")
         sys.exit()
 
-def stopnwait():
-    pass
+def stopnwait(data, addr):
+    sender_socket.sendto(data.encode('utf-8'), addr)
+    try:
+        #data를 보내고 ack를 기다림
+        receive = sender_socket.recvfrom(1024)
+        print('received ack index :', receive.decode('utf-8')[0])
+    except socket.timeout:
+        #timeout이 발생하면 data를 다시 보낸다.
+        print("there's no ack")
+        sender_socket.sendto(data.encode('utf-8'), addr)
 
 def sender_header(data, addr):
     dst_ip, dst_port = addr
