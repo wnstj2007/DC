@@ -4,7 +4,7 @@ import os
 
 def sender_send(file_name, addr):
     if os.path.isfile(file_name):
-        sequence_num = 1
+        sequence_num = 0
         file_size = os.stat(file_name)
         print('file size in bytes:', file_size.st_size)
         file_size = str(int(file_size.st_size/983)+1)
@@ -26,7 +26,7 @@ def sender_send(file_name, addr):
                 header = header[:-4]
                 header += new_checksum
                 sender_data = sequence_num + header + data
-                stopnwait(sender_data, addr)
+                sequence_num = stopnwait(sender_data, addr)
                 print('packet number', i)
 
         print('sent all the files normally!')
@@ -43,7 +43,8 @@ def stopnwait(data, addr):
     except socket.timeout:
         #timeout이 발생하면 data를 다시 보낸다.
         print("there's no ack")
-        sender_socket.sendto(data.encode('utf-8'), addr)
+        stopnwait(data, addr)
+    return receive.decode('utf-8')[0]
 
 def sender_header(data, addr):
     dst_ip, dst_port = addr
