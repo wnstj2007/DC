@@ -1,8 +1,14 @@
 import socket
 import sys
 import os
+import time
 
 def receive_file(file_name, addr):
+    #전송 오류와 송신 오류를 설정하는 변수
+    #상황에 맞게 True로 변경하여 사용
+    send_error = False
+    receive_error = False
+    old_frame = -1
     file_size, addr = receiver_socket.recvfrom(2000)
     file_size = file_size.decode('utf-8')
     header = file_size[:40]
@@ -27,11 +33,33 @@ def receive_file(file_name, addr):
             new_checksum = checksum(header, file_data)
             print('Received checksum :',sender_checksum)
             print('New calculated checksum : 0x'+new_checksum)
+            new_frame = file_data[0]
+            #이전에 받은 프레임과 현재 받은 프레임이 같으면 바로 ack를 전송하고 다음 패킷을 받음
+            if old_frame == new_frame:
+                stopnwait(file_data, addr)
+                continue
+            stopnwait(file_data, addr, send_error, receive_error)
+            old_frame = new_frame
             if sender_checksum == new_checksum:
                 f.write(file_data.encode('utf-8'))
+                send_error = False
+                receive_error = False
             else:
                 print('not matching checksum!')
                 sys.exit()
+
+def stopnwait(data, addr, send_error=False, receive_error=False):
+    if data[0] == '1':
+        data[0] == '0'
+    elif data[0] == '0':
+        data[0] == '1'
+
+    if send_error == True:
+        time.sleep(17)
+    if receive_error == True:
+        receiver_socket.sendto(data.encode('utf-8'), ('127.0.0.1', 8000))
+    else:
+        receiver_socket.sendto(data.encode('utf-8'), addr)
 
 def checksum(header, data):
     sum = '0000'
