@@ -4,14 +4,15 @@ import os
 
 def sender_send(file_name, addr):
     if os.path.isfile(file_name):
+        sequence_num = 1
         file_size = os.stat(file_name)
         print('file size in bytes:', file_size.st_size)
-        file_size = str(int(file_size.st_size/984)+1)
+        file_size = str(int(file_size.st_size/983)+1)
         header = sender_header(file_size, addr)
         new_checksum = checksum(header, file_size)
         header = header[:-4]
         header += new_checksum
-        sender_data = header + file_size
+        sender_data = sequence_num + header + file_size
         sender_socket.sendto(sender_data.encode('utf-8'), addr)
         with open(file_name, 'rb') as f:
             for i in range(int(file_size)):
@@ -32,6 +33,9 @@ def sender_send(file_name, addr):
     else:
         print("file doesn't exist!")
         sys.exit()
+
+def stopnwait():
+    pass
 
 def sender_header(data, addr):
     dst_ip, dst_port = addr
@@ -98,6 +102,8 @@ def checksum(header, data):
 port = 8000
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sender_socket.bind(('', 8000))
+sender_socket.setblocking(False)
+sender_socket.settimeout(15)
 
 data, addr = sender_socket.recvfrom(2000)
 data = data.decode('utf-8').split(' ')

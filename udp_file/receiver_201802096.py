@@ -70,8 +70,6 @@ ip_addr = '192.168.1.3'
 port = 8000
 
 receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-receiver_socket.setblocking(False)
-receiver_socket.settimeout(15)
 
 command = input("enter a command:\n1.receive [file_name]\n2.exit\n")
 
