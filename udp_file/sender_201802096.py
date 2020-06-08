@@ -28,6 +28,7 @@ def sender_send(file_name, addr):
                 sender_data = sequence_num + header + data
                 sequence_num = stopnwait(sender_data, addr)
                 print('packet number', i)
+                print('')
 
         print('sent all the files normally!')
     else:
