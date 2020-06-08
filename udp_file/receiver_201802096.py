@@ -8,7 +8,7 @@ def receive_file(file_name, addr):
     #상황에 맞게 True로 변경하여 사용
     send_error = False
     receive_error = False
-    old_frame = -1
+    old_frame = ''
     file_size, addr = receiver_socket.recvfrom(2000)
     file_size = file_size.decode('utf-8')
     header = file_size[:40]
@@ -29,7 +29,7 @@ def receive_file(file_name, addr):
             new_frame = file_data[0]
             header = file_data[1:41]
             file_data = file_data[41:]
-            print(len(file_data))
+            print('received frame number :', new_frame)
             sender_checksum = header[-4:]
             header = header[:-4] + '0000'
             new_checksum = checksum(header, file_data)
@@ -45,6 +45,7 @@ def receive_file(file_name, addr):
                 continue
             stopnwait(new_frame+header+file_data, addr, send_error, receive_error)
             old_frame = new_frame
+            print('')
             if sender_checksum == new_checksum:
                 f.write(file_data.encode('utf-8'))
             else:
@@ -53,9 +54,11 @@ def receive_file(file_name, addr):
 
 def stopnwait(data, addr, send_error=False, receive_error=False):
     if data[0] == '1':
-        data[0] == '0'
+        next_frame = '0'
     elif data[0] == '0':
-        data[0] == '1'
+        next_frame == '1'
+    data = next_frame+data[1:]
+    print('send ack number :', next_frame)
 
     if send_error == True:
         time.sleep(17)
