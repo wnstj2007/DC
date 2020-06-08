@@ -39,12 +39,12 @@ def stopnwait(data, addr):
     try:
         #data를 보내고 ack를 기다림
         receive = sender_socket.recvfrom(1024)
-        print('received ack index :', receive.decode('utf-8')[0])
+        print('received ack index :', receive[0].decode('utf-8'))
     except socket.timeout:
         #timeout이 발생하면 data를 다시 보낸다.
         print("there's no ack")
         stopnwait(data, addr)
-    return receive.decode('utf-8')[0]
+    return receive[0].decode('utf-8')
 
 def sender_header(data, addr):
     dst_ip, dst_port = addr
