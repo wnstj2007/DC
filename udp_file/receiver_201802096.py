@@ -26,8 +26,8 @@ def receive_file(file_name, addr):
             print('packet number', i)
             file_data, addr = receiver_socket.recvfrom(1024)
             file_data = file_data.decode('utf-8')
-            header = file_data[:40]
-            file_data = file_data[40:]
+            header = file_data[1:41]
+            file_data = file_data[41:]
             sender_checksum = header[-4:]
             header = header[:-4] + '0000'
             new_checksum = checksum(header, file_data)

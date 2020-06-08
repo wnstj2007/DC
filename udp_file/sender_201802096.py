@@ -4,10 +4,10 @@ import os
 
 def sender_send(file_name, addr):
     if os.path.isfile(file_name):
-        sequence_num = 0
+        sequence_num = '0'
         file_size = os.stat(file_name)
         print('file size in bytes:', file_size.st_size)
-        file_size = str(int(file_size.st_size/983)+1)
+        file_size = str(int(file_size.st_size/982)+1)
         header = sender_header(file_size, addr)
         new_checksum = checksum(header, file_size)
         header = header[:-4]
@@ -19,7 +19,7 @@ def sender_send(file_name, addr):
                 print('sending index :', sequence_num)
                 #헤더길이 : 8+8+4+4+2+2+4+4+4 = 40
                 #1024-40-1 = 983
-                data = f.read(983).decode('utf-8')
+                data = f.read(982).decode('utf-8')
                 header = sender_header(data, addr)
                 #마지막 4byte인 checksum 값을 0에서 계산된 값으로 변경
                 new_checksum = checksum(header, data)
