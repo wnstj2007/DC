@@ -71,7 +71,6 @@ def checksum(header, data):
 
     for i in header:
         temp = format(ord(i[0]), 'x').zfill(2)+format(ord(i[1]), 'x').zfill(2)
-        print('add',temp)
         sum = format(int(temp, 16)+int(sum, 16) ,'x').zfill(4)
         #carry bit 발생 시
         if len(sum)==5:
@@ -79,13 +78,11 @@ def checksum(header, data):
 
     for i in data:
         temp = format(ord(i[0]), 'x').zfill(2)+format(ord(i[1]), 'x').zfill(2)
-        print('add',temp)
         sum = format(int(temp, 16)+int(sum, 16) ,'x').zfill(4)
         #carry bit 발생 시
         if len(sum)==5:
             sum = format(int(sum[1:], 16)+int(sum[0], 16), 'x').zfill(4)
 
-    print('before :',sum)
     #sum을 이진수로 바꾼 후 0과 1을 임의의 값으로 치환했다가 다시 1, 0으로 바꾼다.
     sum = format(int(sum, 16), 'b')
     sum = sum.replace('0', 'a')
@@ -93,7 +90,6 @@ def checksum(header, data):
     sum = sum.replace('a', '1')
     sum = sum.replace('b', '0')
     sum = format(int(sum, 2), 'x').zfill(4)
-    print('after :',sum)
     return sum
 
 ip_addr = '192.168.0.8'
