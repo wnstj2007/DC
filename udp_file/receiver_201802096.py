@@ -26,14 +26,15 @@ def receive_file(file_name, addr):
             print('packet number', i)
             file_data, addr = receiver_socket.recvfrom(1024)
             file_data = file_data.decode('utf-8')
+            new_frame = file_data[0]
             header = file_data[1:41]
             file_data = file_data[41:]
+            print(len(file_data))
             sender_checksum = header[-4:]
             header = header[:-4] + '0000'
             new_checksum = checksum(header, file_data)
             print('Received checksum :',sender_checksum)
             print('New calculated checksum : 0x'+new_checksum)
-            new_frame = file_data[0]
             #이전에 받은 프레임과 현재 받은 프레임이 같으면 바로 ack를 전송하고 다음 패킷을 받음
             if old_frame == new_frame:
                 if receive_error == True:
