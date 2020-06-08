@@ -44,7 +44,11 @@ def stopnwait(data, addr):
     except socket.timeout:
         #timeout이 발생하면 data를 다시 보낸다.
         print("there's no ack")
-        return stopnwait(data, addr)
+        print('sending index :', data[0])
+        ack = stopnwait(data, addr)
+        #send error가 발생하면 같은 ack가 두 번 오게된다.
+        #sender_socket.recvfrom(1024)
+        return ack
     return receive.decode('utf-8')[0]
 
 def sender_header(data, addr):

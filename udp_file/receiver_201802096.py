@@ -3,11 +3,12 @@ import sys
 import os
 import time
 
+#전송 오류와 송신 오류를 설정하는 변수
+#상황에 맞게 True로 변경하여 사용
+send_error = False
+receive_error = False
+
 def receive_file(file_name, addr):
-    #전송 오류와 송신 오류를 설정하는 변수
-    #상황에 맞게 True로 변경하여 사용
-    send_error = False
-    receive_error = False
     old_frame = ''
     file_size, addr = receiver_socket.recvfrom(2000)
     file_size = file_size.decode('utf-8')
@@ -21,13 +22,13 @@ def receive_file(file_name, addr):
     if sender_checksum != new_checksum:
         print('not matching checksum!')
         sys.exit()
+    print('')
     with open(file_name, 'wb') as f:
         for _ in range(int(file_size)):
-            old_frame = receive_data(f, old_frame, send_error, receive_error)
-            send_error = False
-            receive_error = False
+            old_frame = receive_data(f, old_frame)
 
-def receive_data(f, old_frame, send_error=False, receive_error=False):
+def receive_data(f, old_frame):
+    global send_error, receive_error
     file_data, addr = receiver_socket.recvfrom(1024)
     file_data = file_data.decode('utf-8')
     new_frame = file_data[0]
@@ -43,10 +44,11 @@ def receive_data(f, old_frame, send_error=False, receive_error=False):
     if old_frame == new_frame:
         if receive_error == True:
             print('ack is lost!')
+            receive_error = False
         stopnwait(new_frame+header+file_data, addr)
-        receive_data(f, old_frame)
+        send_error = False
+        return new_frame
     stopnwait(new_frame+header+file_data, addr, send_error, receive_error)
-    print('')
     if sender_checksum == new_checksum:
         f.write(file_data.encode('utf-8'))
     else:
@@ -68,6 +70,7 @@ def stopnwait(data, addr, send_error=False, receive_error=False):
         receiver_socket.sendto(data.encode('utf-8'), ('127.0.0.1', 8000))
     else:
         receiver_socket.sendto(data.encode('utf-8'), addr)
+    print('')
 
 def checksum(header, data):
     sum = '0000'
