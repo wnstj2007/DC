@@ -43,7 +43,7 @@ def receive_file(file_name, addr):
                 send_error = False
                 receive_error = False
                 continue
-            stopnwait(file_data, addr, send_error, receive_error)
+            stopnwait(new_frame+header+file_data, addr, send_error, receive_error)
             old_frame = new_frame
             if sender_checksum == new_checksum:
                 f.write(file_data.encode('utf-8'))
