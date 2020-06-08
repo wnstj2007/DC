@@ -23,33 +23,36 @@ def receive_file(file_name, addr):
         sys.exit()
     with open(file_name, 'wb') as f:
         for _ in range(int(file_size)):
-            file_data, addr = receiver_socket.recvfrom(1024)
-            file_data = file_data.decode('utf-8')
-            new_frame = file_data[0]
-            header = file_data[1:41]
-            file_data = file_data[41:]
-            print('received frame number :', new_frame)
-            sender_checksum = header[-4:]
-            header = header[:-4] + '0000'
-            new_checksum = checksum(header, file_data)
-            print('Received checksum :',sender_checksum)
-            print('New calculated checksum : 0x'+new_checksum)
-            #이전에 받은 프레임과 현재 받은 프레임이 같으면 바로 ack를 전송하고 다음 패킷을 받음
-            if old_frame == new_frame:
-                if receive_error == True:
-                    print('ack is lost!')
-                stopnwait(file_data, addr)
-                send_error = False
-                receive_error = False
-                continue
-            stopnwait(new_frame+header+file_data, addr, send_error, receive_error)
-            old_frame = new_frame
-            print('')
-            if sender_checksum == new_checksum:
-                f.write(file_data.encode('utf-8'))
-            else:
-                print('not matching checksum!')
-                sys.exit()
+            old_frame = receive_data(f, old_frame, send_error, receive_error)
+            send_error = False
+            receive_error = False
+
+def receive_data(f, old_frame, send_error=False, receive_error=False):
+    file_data, addr = receiver_socket.recvfrom(1024)
+    file_data = file_data.decode('utf-8')
+    new_frame = file_data[0]
+    header = file_data[1:41]
+    file_data = file_data[41:]
+    print('received frame number :', new_frame)
+    sender_checksum = header[-4:]
+    header = header[:-4] + '0000'
+    new_checksum = checksum(header, file_data)
+    print('Received checksum :',sender_checksum)
+    print('New calculated checksum : 0x'+new_checksum)
+    #이전에 받은 프레임과 현재 받은 프레임이 같으면 바로 ack를 전송하고 다음 패킷을 받음
+    if old_frame == new_frame:
+        if receive_error == True:
+            print('ack is lost!')
+        stopnwait(new_frame+header+file_data, addr)
+        receive_data(f, old_frame)
+    stopnwait(new_frame+header+file_data, addr, send_error, receive_error)
+    print('')
+    if sender_checksum == new_checksum:
+        f.write(file_data.encode('utf-8'))
+    else:
+        print('not matching checksum!')
+        sys.exit()
+    return new_frame
 
 def stopnwait(data, addr, send_error=False, receive_error=False):
     if data[0] == '1':
