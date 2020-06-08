@@ -56,7 +56,7 @@ def stopnwait(data, addr, send_error=False, receive_error=False):
     if data[0] == '1':
         next_frame = '0'
     elif data[0] == '0':
-        next_frame == '1'
+        next_frame = '1'
     data = next_frame+data[1:]
     print('send ack number :', next_frame)
 
