@@ -96,7 +96,7 @@ def checksum(header, data):
     print('after :',sum)
     return sum
 
-ip_addr = '192.168.1.3'
+ip_addr = '192.168.0.8'
 port = 8000
 
 receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
