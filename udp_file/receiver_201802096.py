@@ -47,6 +47,7 @@ def receive_data(f, old_frame):
             receive_error = False
         stopnwait(new_frame+header+file_data, addr)
         send_error = False
+        new_frame = receive_data(f, new_frame)
         return new_frame
     stopnwait(new_frame+header+file_data, addr, send_error, receive_error)
     if sender_checksum == new_checksum:
